@@ -18,10 +18,6 @@ namespace Nop.Plugin.Misc.BambooCard.Core.Infrastructure
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddSignalR();
-            services.Configure<RazorViewEngineOptions>(options =>
-            {
-                options.ViewLocationExpanders.Add(new ViewLocationExpander());
-            });
 
             services.AddNopStationServices("Misc.BambooCard.Core");
 
