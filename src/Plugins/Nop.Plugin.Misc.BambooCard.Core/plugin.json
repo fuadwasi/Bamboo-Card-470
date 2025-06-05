@@ -1,0 +1,12 @@
+﻿{
+  "Group": "BambooCard",
+  "FriendlyName": "BambooCard Core",
+  "SystemName": "Misc.BambooCard.Core",
+  "Version": "0.0001",
+  "SupportedVersions": [ "4.70" ],
+  "Author": "Fuad Hasan",
+  "DisplayOrder": 2,
+  "FileName": "Nop.Plugin.Misc.BambooCard.Core.dll",
+  "Description": "BambooCard plugin",
+  "DependsOnSystemNames": [ "NopStation.Core" ]
+}
