@@ -65,8 +65,6 @@ public class DiscountOnOrderCountController : BasePluginController
 
     #endregion
 
-
-
     #region Methods
 
     public async Task<IActionResult> Configure(int discountId, int? discountRequirementId)

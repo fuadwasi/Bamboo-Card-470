@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.EMMA;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Discounts;
+using Nop.Core.Domain.Orders;
 using Nop.Services.Configuration;
 using Nop.Services.Customers;
 using Nop.Services.Discounts;
@@ -137,6 +139,42 @@ public class DiscountOnOrderCountDiscountRequirementRule : BasePlugin, IDiscount
             if (string.IsNullOrEmpty(existingResource))
                 await _localizationService.AddOrUpdateLocaleResourceAsync(resource.Key, resource.Value);
         }
+    }
+
+    private async Task InstallDiscountAsync()
+    {
+        var discount = new Discount
+        {
+            Name = "Discount on Order Count",
+            DiscountTypeId = (int)DiscountType.AssignedToOrderTotal,
+            DiscountPercentage = 10,
+            UsePercentage = true,
+            RequiresCouponCode = false,
+            IsActive = true,
+            AdminComment = "This discount applies when a customer has placed a certain number of orders.",
+            DiscountAmount = 10,
+            IsCumulative = true
+        };
+        await _discountService.InsertDiscountAsync(discount);
+
+        var discountRequirement = new DiscountRequirement
+        {
+            DiscountId = discount.Id,
+            DiscountRequirementRuleSystemName = DiscountOnOrderCountDefaults.SystemName
+        };
+
+        await _discountService.InsertDiscountRequirementAsync(discountRequirement);
+
+        var orderStatusIds = new List<int>()
+        {
+            (int) OrderStatus.Complete,
+            (int) OrderStatus.Pending,
+            (int) OrderStatus.Processing,
+        };
+
+        //save restricted customer role identifier
+        await _settingService.SetSettingAsync(string.Format(DiscountOnOrderCountDefaults.OrderCountSettingsKey, discountRequirement.Id), DiscountOnOrderCountDefaults.DefultNumberOfOrderToPlaceCount);
+        await _settingService.SetSettingAsync(string.Format(DiscountOnOrderCountDefaults.OrderStatusIdsSettingsKey, discountRequirement.Id), orderStatusIds);
     }
 
     /// <summary>
