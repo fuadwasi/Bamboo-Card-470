@@ -57,7 +57,7 @@ public class BambooCardPlguin : BasePlugin, IMiscPlugin, INopStationPlugin
                 AttributeControlType = AttributeControlType.TextBox,
                 DefaultValue = string.Empty,
                 DisplayOrder = 1,
-                TextPrompt = "Enter your gift message here"
+                TextPrompt = "Gift Message"
             });
         }
     }
