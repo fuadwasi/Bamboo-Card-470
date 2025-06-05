@@ -7,4 +7,6 @@ public static class DiscountOnOrderCountDefaults
     public static string OrderStatusIdsSettingsKey => "DiscountRequirement.DiscountOnOrderCount.OrderStatusIds-{0}";
 
     public static string HtmlFieldPrefix => "DiscountOnOrderCount{0}";
+
+    public static int DefultNumberOfOrderToPlaceCount => 3;
 }
