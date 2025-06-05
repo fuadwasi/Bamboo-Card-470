@@ -1,0 +1,86 @@
+﻿@model RequirementModel
+@{
+    Layout = "";
+}
+
+<script>
+    $(document).ready(function () {
+        $('#saverangerrequirement@(Model.RequirementId)').click(function () {
+            var orderCount = $("#@Html.IdFor(model => model.OrderCount)").val();
+            var orderStatusIds = $("#@Html.IdFor(model => model.OrderStatusIds)").val();
+            var discountId = @Model.DiscountId;
+            var requirementId = @Model.RequirementId;
+            var postData = {
+                DiscountId: discountId,
+                RequirementId: requirementId,
+                OrderCount: orderCount,
+                OrderStatusIds: orderStatusIds
+            };
+            addAntiForgeryToken(postData);
+
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "@(Url.Action("Configure", "DiscountOnOrderCount"))",
+                data: postData,
+                success: function (data, textStatus, jqXHR) {
+                    var $alertInfoEl = $("#saverangerrequirementAlert-info");
+                    let response = jqXHR.responseJSON;
+                    if (response instanceof Object && response.hasOwnProperty('Errors')) {
+                        var errorMessages = '';
+                        $.each(response.Errors, function (i, error) {
+                            errorMessages += error;
+                            if (response.Errors.length - 1 != i)
+                                errorMessages += '</br>';
+                        });
+                        $alertInfoEl.html(errorMessages);
+                        $("#saverangerrequirementAlert").click();
+                        return;
+                    }
+
+                    $('#pnl-save-requirement-result@(Model.RequirementId)').fadeIn("slow").delay(1000).fadeOut("slow");
+                    @if (Model.RequirementId == 0) {
+                        <text>$("#discountRequirementContainer").trigger('nopnewdiscountruleadded', [data.NewRequirementId]); </text>
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    var $alertInfoEl = $("#saverangerrequirementAlert-info");
+                    $alertInfoEl.html('@T("Admin.Promotions.Discounts.Requirements.FailedToSave")');
+                    $("#saverangerrequirementAlert").click();
+                }
+            });
+        });
+    });
+</script>
+
+<div class="form-group row">
+    <div class="col-md-3 requirement-label-col">
+        <nop-label asp-for="OrderCount" />
+    </div>
+    <div class="col-md-9 requirement-data-col">
+        <div class="requirement-data-input">
+            <nop-editor asp-for="OrderCount" />
+        </div>
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-md-3 requirement-label-col">
+        <nop-label asp-for="OrderStatusIds" />
+    </div>
+    <div class="col-md-9 requirement-data-col">
+        <div class="requirement-data-input">
+            <nop-select asp-for="OrderStatusIds" asp-items="Model.AvailableOrderStatuses" asp-multiple="true" />
+        </div>
+        <div class="requirement-data-buttons">
+            <button type="button" id="saverangerrequirement@(Model.RequirementId)" class="btn btn-primary">@T("Admin.Common.Save")</button>
+        </div>
+    </div>
+</div>
+<div class="form-group row">
+    <div class="offset-md-3 col-md-9 requirement-messages-col">
+        <div id="pnl-save-requirement-result@(Model.RequirementId)" style="display: none;" class="text-green margin-t-5">
+            @T("Admin.Promotions.Discounts.Requirements.Saved")
+        </div>
+    </div>
+</div>
+<nop-alert asp-alert-id="saverangerrequirementAlert" />

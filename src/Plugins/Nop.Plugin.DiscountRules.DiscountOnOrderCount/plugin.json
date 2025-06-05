@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Discount requirements",
+  "FriendlyName": "Discount requirement for customer after X orders",
+  "SystemName": "DiscountRules.DiscountOnOrderCount",
+  "Version": "4.70.101",
+  "SupportedVersions": [ "4.70" ],
+  "Author": "Fuad Hasan",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.DiscountRules.DiscountOnOrderCount.dll",
+  "Description": "This plugin allows you to configure discounts for customers who have already placed 'X' orders"
+}
