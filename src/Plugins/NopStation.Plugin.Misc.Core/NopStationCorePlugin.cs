@@ -114,16 +114,6 @@ public class NopStationCorePlugin : BasePlugin, IAdminMenuPlugin, INopStationPlu
             };
             await _nopStationCoreService.ManageSiteMapAsync(rootNode, license, NopStationMenuType.Core);
         }
-
-        var reportBug = new SiteMapNode()
-        {
-            Title = await _localizationService.GetResourceAsync("Admin.NopStation.Core.Menu.ReportBug"),
-            Visible = true,
-            IconClass = "fa fa-bug",
-            Url = "https://www.nop-station.com/report-bug?utm_source=admin-panel&utm_medium=products&utm_campaign=report-bug",
-            OpenUrlInNewTab = true
-        };
-        await _nopStationCoreService.ManageSiteMapAsync(rootNode, reportBug, NopStationMenuType.Root);
     }
 
     public List<KeyValuePair<string, string>> PluginResouces()
