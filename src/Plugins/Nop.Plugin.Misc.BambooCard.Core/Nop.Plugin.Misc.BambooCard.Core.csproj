@@ -19,6 +19,63 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Admin\Components\**" />
+    <Compile Remove="Areas\Admin\Events\**" />
+    <Compile Remove="Areas\Admin\Extensions\**" />
+    <Compile Remove="Areas\Admin\Helpers\**" />
+    <Compile Remove="Areas\Admin\Infrastructure\**" />
+    <Compile Remove="Areas\Admin\Themes\**" />
+    <Compile Remove="Components\**" />
+    <Compile Remove="Controllers\**" />
+    <Compile Remove="Data\**" />
+    <Compile Remove="Domains\**" />
+    <Compile Remove="Dtos\**" />
+    <Compile Remove="Events\**" />
+    <Compile Remove="Extensions\**" />
+    <Compile Remove="Factories\**" />
+    <Compile Remove="Helpers\**" />
+    <Compile Remove="Models\**" />
+    <Compile Remove="Themes\**" />
+    <Compile Remove="Views\**" />
+    <EmbeddedResource Remove="Areas\Admin\Components\**" />
+    <EmbeddedResource Remove="Areas\Admin\Events\**" />
+    <EmbeddedResource Remove="Areas\Admin\Extensions\**" />
+    <EmbeddedResource Remove="Areas\Admin\Helpers\**" />
+    <EmbeddedResource Remove="Areas\Admin\Infrastructure\**" />
+    <EmbeddedResource Remove="Areas\Admin\Themes\**" />
+    <EmbeddedResource Remove="Components\**" />
+    <EmbeddedResource Remove="Controllers\**" />
+    <EmbeddedResource Remove="Data\**" />
+    <EmbeddedResource Remove="Domains\**" />
+    <EmbeddedResource Remove="Dtos\**" />
+    <EmbeddedResource Remove="Events\**" />
+    <EmbeddedResource Remove="Extensions\**" />
+    <EmbeddedResource Remove="Factories\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Themes\**" />
+    <EmbeddedResource Remove="Views\**" />
+    <None Remove="Areas\Admin\Components\**" />
+    <None Remove="Areas\Admin\Events\**" />
+    <None Remove="Areas\Admin\Extensions\**" />
+    <None Remove="Areas\Admin\Helpers\**" />
+    <None Remove="Areas\Admin\Infrastructure\**" />
+    <None Remove="Areas\Admin\Themes\**" />
+    <None Remove="Components\**" />
+    <None Remove="Controllers\**" />
+    <None Remove="Data\**" />
+    <None Remove="Domains\**" />
+    <None Remove="Dtos\**" />
+    <None Remove="Events\**" />
+    <None Remove="Extensions\**" />
+    <None Remove="Factories\**" />
+    <None Remove="Helpers\**" />
+    <None Remove="Models\**" />
+    <None Remove="Themes\**" />
+    <None Remove="Views\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Areas\Admin\Views\BambooProductAttribute\List.cshtml" />
     <None Remove="Areas\Admin\Views\_ViewImports.cshtml" />
     <None Remove="Areas\Admin\Views\_ViewStart.cshtml" />
@@ -50,25 +107,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="Areas\Admin\Components\" />
-    <Folder Include="Areas\Admin\Events\" />
-    <Folder Include="Areas\Admin\Extensions\" />
-    <Folder Include="Areas\Admin\Helpers\" />
-    <Folder Include="Areas\Admin\Infrastructure\" />
-    <Folder Include="Areas\Admin\Themes\" />
-    <Folder Include="Components\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Data\" />
-    <Folder Include="Domains\" />
-    <Folder Include="Dtos\" />
-    <Folder Include="Events\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Factories\" />
-    <Folder Include="Helpers\" />
     <Folder Include="Infrastructure\Middlewares\" />
-    <Folder Include="Models\" />
-    <Folder Include="Themes\" />
-    <Folder Include="Views\" />
   </ItemGroup>
   
   <ItemGroup>

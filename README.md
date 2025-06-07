@@ -1,80 +1,389 @@
-﻿﻿nopCommerce: free and open-source eCommerce solution
-===========
+﻿# 🛒 nopCommerce Custom Deployment (Dockerized)
 
-[nopCommerce](https://www.nopcommerce.com/?utm_source=github&utm_medium=content&utm_campaign=homepage) is the best open-source eCommerce platform. nopCommerce is free, and it is the most popular ASP.NET Core shopping cart.
+This repository provides a containerized nopCommerce setup with:
 
-![nopCommerce demo](https://www.nopcommerce.com/images/github/responsive_devices_codeplex.png#v1)
+- ✅ A custom **Discount Plugin**: `DiscountRules.DiscountOnOrderCount`
+- ✅ Custom **Misc Plugin**: `NopStation.Core`
+- ✅ Custom **Misc Plugin**: `Misc.BambooCard.Core`
+- ✅ Custom **Misc Plugin** for api: `NopStation.Plugin.Misc.AdminApi`
+- ✅ A **JWT-secured API endpoint** for order retrieval by email
+- ✅ Docker-based local development and testing
+- ✅ Cloud-ready deployment support (AWS & Azure)
 
-### Key features ###
+---
 
-* The product is being developed and supported by the professional team since 2008.
-* nopCommerce has been downloaded more than 3,000,000 times.
-* The active developer community has more than 250,000 members.
-* nopCommerce runs on .NET 8 with an MS SQL 2012 (or higher) backend database.
-* nopCommerce is cross-platform, and you can run it on Windows, Linux, or Mac.
-* nopCommerce supports Docker out of the box, so you can easily run nopCommerce on a Linux machine.
-* nopCommerce supports PostgreSQL and MySQL databases.
-* nopCommerce fully supports web farms. You can read more about it [here](https://docs.nopcommerce.com/en/developer/tutorials/web-farms.html?utm_source=github&utm_medium=referral&utm_campaign=documentation&utm_content=text).  
-* All methods in nopCommerce are async.
-* nopCommerce supports multi-factor authentication out of the box.
-* Start our [online course for developers](https://nopcommerce.com/training?utm_source=github&utm_medium=referral&utm_campaign=course&utm_content=text) and get the practical and technical skills you need to run and customize nopCommerce websites.
+## 📁 Project Structure
 
-![Logo](https://www.nopcommerce.com/images/github/logos.png#v2)
+```
+/
+├── Dockerfile                   # Multi-stage Docker build
+├── docker-compose.yml          # Services: nopCommerce + SQL Server
+├── entrypoint.sh               # App start script
+├── /src/
+│   ├── /Presentation/Nop.Web/  # Main nopCommerce app
+│   └── /Plugins/
+│       └── /DiscountRules.DiscountOnOrderCount/  # Custom plugin
+│       └── /NopStation.Core/  # Custom plugin
+│       └── /Misc.BambooCard.Core/  # Custom plugin
+│       └── /NopStation.Plugin.Misc.AdminApi/  # Custom plugin
+```
 
-nopCommerce architecture follows well-known software patterns and the best security practices. The source code is fully customizable. Pluggable and clear architecture makes it easy to develop custom functionality and follow any business requirements.
+---
 
-Using the latest Microsoft technologies, nopCommerce provides high performance, stability, and security. nopCommerce is also fully compatible with Azure and web farms.
+## ⚙️ Installation: Custom Discount Plugin
 
-Our clear and detailed [documentation](https://docs.nopcommerce.com/developer/index.html?utm_source=github&utm_medium=referral&utm_campaign=documentation&utm_content=text) and [online course](https://nopcommerce.com/training?utm_source=github&utm_medium=referral&utm_campaign=course&utm_content=text) for developers will help you start with nopCommerce easily.
+The plugin applies a configurable discount for loyal customers:
+- 🔁 Customers with 3+ previous orders get a discount (default: 10%)
+- 🔧 Discount percentage is configurable via the admin panel
+
+### 🪛 Steps
+
+1. Start the application (see Docker instructions below).
+2. Navigate to:
+   ```
+   http://localhost:8010/Admin
+   ```
+3. Log in with the admin credentials created during installation.
+4. Go to:
+   ```
+   Configuration > Local Plugins
+   ```
+5. Find `DiscountRules.CustomerOrderHistory` → Click **Install** and **Restart** the application.
+6. Configure the discount from:
+   ```
+   Promotions > Discounts
+   ```
+7. Configure a Discount as per the need and → Click **Save and Continue Edit**
+8. After saving go to **Requirements** section.
+9. **Discount requirement type**  → Select → **Discount requirement for customer after X orders**
+10. **Order Count**  → Set Value 
+11. **Discount requirement type**  → Select → **Processing** , **Complete** (Or you can select as per you requirment. But must need to select 1 at least)
+12. Click **Save**
+
+Now thhe discount will be work based on the configuration. 
+
+**Note:** At the time of the install the plugin will be automatically creates a discoutn applied on OrderTotal discount of 10% with this requirment rule with 3 orders and Order Status of Complete, Process, Prending.
+
+---
+
+## 📝 Configuration: Checkout Attribute – Gift Message
+
+NopCommerce out of the box support checkout attribute. By creating checkout attribute this requirment can be fullfilled easily.
+
+### 🪛 Steps
+
+1. Start the application (see Docker instructions below).
+2. Navigate to:
+   ```
+   http://localhost:8010/Admin
+   ```
+3. Log in with the admin credentials created during installation.
+4. Go to:
+   ```
+   Catalog > Checkout attributes
+   ```
+5. Click **Add new** (top right corner).
+6. Fill in the following fields:
+   - **Name**: `Gift Message`
+   - **Text prompt**: `Enter your gift message (required)`
+   - **Required**: ✅ Check this box
+   - **Attribute control type**: `TextBox`
+7. Optional fields:
+   - **Display order**: `1` (or any number depending on where you want it to appear)
+   - **Limited to stores**: Select if applicable
+8. Click **Save**
+
+Now the **Gift Message** field will appear on the checkout page and must be filled in by the customer before placing an order. The message will be saved and visible in the order details section in both admin and customer views.
+
+**Note:** There is also a customer misc plgin name **Misc.BambooCard.Core** on install it automaically insert the **Gift Message** checkout attribute.
 
 
-### The advantages of working with nopCommerce ###
+## ⚙️ Allow to search by "Name" on the product attribute page: Installation: Misc.BambooCard.Core Plugin for 
 
-nopCommerce offers powerful [out-of-the-box features](https://www.nopcommerce.com/features?utm_source=github&utm_medium=referral&utm_campaign=features&utm_content=text) for creating an online store of any size and type.
+The plugin enable the functionality to  search by "Name" on the product attribute page. It has a dependency to NopStation.Core plguin. To install Misc.BambooCard.Core need to install the NopStation Core Plugin and apply the license key.
 
-nopCommerce is integrated with all the popular third-party services. You can find thousands of integrations on nopCommerce [Marketplace](https://www.nopcommerce.com/marketplace?utm_source=github&utm_medium=referral&utm_campaign=marketplace&utm_content=text).
+### 🪛 Steps
 
-The [Web API plugin](https://www.nopcommerce.com/web-api?utm_source=github&utm_medium=referral&utm_campaign=WebAPI&utm_content=text) by the nopCommerce team lets you build integrations with third-party services or mobile applications using REST. The Web API plugin is available with source code and covers all methods of nopCommerce: backend and frontend. You can read more about it [here](https://www.nopcommerce.com/web-api?utm_source=github&utm_medium=referral&utm_campaign=WebAPI&utm_content=text).
+1. Start the application (see Docker instructions below).
+2. Navigate to:
+   ```
+   http://localhost:8010/Admin
+   ```
+3. Log in with the admin credentials created during installation.
+4. Go to:
+   ```
+   Configuration > Local Plugins
+   ```
+5. Find `NopStation Core` → Click **Install**.
+6. Find `BambooCard Core` → Click **Install**.
+7. **Restart** the application to complete the installation.
+8. Navigate to:
+   ```
+   http://localhost:8010/Admin
+   ```
+9. Go to:
+   ```
+   NopStation > Core settings > License
+   ```
+10. On the **License string** field put the provided license → click **Save**
 
-Friendly members of the [nopCommerce community](https://www.nopcommerce.com/boards?utm_source=github&utm_medium=referral&utm_campaign=forum&utm_content=text) will always help with advice and share their experiences. nopCommerce core development team provides [professional support](https://www.nopcommerce.com/nopcommerce-premium-support-services?utm_source=github&utm_medium=referral&utm_campaign=premium_support&utm_content=text) within 24 hours.
-
-
-## Store demo ##
-
-Evaluate the functionality and convenience of nopCommerce as a customer and store owner.
-
-Front End | Admin area
-----|------
-[![ScreenShot](https://www.nopcommerce.com/images/github/public-demo.png#v1)](https://demo.nopcommerce.com?utm_source=github&utm_medium=referral&utm_campaign=demo_store&utm_content=button) | [![ScreenShot](https://www.nopcommerce.com/images/github/admin-demo.png#v1)](https://admin-demo.nopcommerce.com/admin?utm_source=github&utm_medium=referral&utm_campaign=demo_store&utm_content=button)
-
-
-### nopCommerce resources ###
-
-nopCommerce official site: [https://www.nopcommerce.com](https://www.nopcommerce.com/?utm_source=github&utm_medium=referral&utm_campaign=homepage&utm_content=links)
-
-* [Demo store](https://www.nopcommerce.com/demo?utm_source=github&utm_medium=referral&utm_campaign=demo_store&utm_content=links)
-* [Download nopCommerce](https://www.nopcommerce.com/download-nopcommerce?utm_source=github&utm_medium=referral&utm_campaign=download_nop&utm_content=links)
-* [Online course for developers](https://nopcommerce.com/training?utm_source=github&utm_medium=referral&utm_campaign=course&utm_content=links)
-* [Feature list](https://www.nopcommerce.com/features?utm_source=github&utm_medium=referral&utm_campaign=features&utm_content=links)
-* [Web API plugin](https://www.nopcommerce.com/web-api?utm_source=github&utm_medium=referral&utm_campaign=WebAPI&utm_content=links)
-* [nopCommerce documentation](https://docs.nopcommerce.com?utm_source=github&utm_medium=referral&utm_campaign=documentation&utm_content=links)
-* [Community forums](https://www.nopcommerce.com/boards?utm_source=github&utm_medium=referral&utm_campaign=forum&utm_content=links)
-* [Premium support services](https://www.nopcommerce.com/nopcommerce-premium-support-services?utm_source=github&utm_medium=referral&utm_campaign=premium_support&utm_content=links)
-* [Certified developer program](https://www.nopcommerce.com/certified-developer-program?utm_source=github&utm_medium=referral&utm_campaign=certified_developer&utm_content=links)
-* [nopCommerce partners](https://www.nopcommerce.com/partners?utm_source=github&utm_medium=referral&utm_campaign=solution_partners&utm_content=links)
-
-nopCommerce YouTube: [The Architecture behind the nopCommerce eCommerce Platform](https://www.youtube.com/watch?v=6gLbizzSA9o&list=PLnL_aDfmRHwtJmzeA7SxrpH3-XDY2ue0a)
+After **License string** is successfully applied the new product attribute functionality will be enabled. Now you can go to the Product Attribute Page and can search with Attribute Name
 
 
-### Earn with nopCommerce ###
 
-60,000 stores worldwide are powered by nopCommerce, and 10,000 new stores open every year. nopCommerce [solution partners’ directory](https://www.nopcommerce.com/partners?utm_source=github&utm_medium=referral&utm_campaign=solution_partners&utm_content=text_become_partner) gets 80,000+ page views per year from store owners who are looking for a partner to build a store from scratch, migrate from another platform, or improve and customize an existing store.
+## ⚙️ API Development (Order Retrieval): Installation: Nop-Station Admin API Plugin for 
 
-Become a solution partner of nopCommerce and get new clients – [learn more](https://www.nopcommerce.com/become-partner?utm_source=github&utm_medium=referral&utm_campaign=become-partner&utm_content=learn_more).
+The **Nop-Station Admin API** plugin enable the functionality of Web Api. It has a dependency to NopStation.Core plguin. To install Nop-Station Admin API need to install the NopStation Core Plugin and apply the license key.
 
-Create a new graphical theme or develop a new plugin or integration and sell it on the nopCommerce [Marketplace](https://www.nopcommerce.com/marketplace?utm_source=github&utm_medium=referral&utm_campaign=marketplace&utm_content=text_sell_on_marketplace).
+### 🪛 Steps
+
+1. Start the application (see Docker instructions below).
+2. Navigate to:
+   ```
+   http://localhost:8010/Admin
+   ```
+3. Log in with the admin credentials created during installation.
+4. Go to:
+   ```
+   Configuration > Local Plugins
+   ```
+5. Find `NopStation Core` → Click **Install**.
+6. Find `Nop-Station Admin API` → Click **Install**.
+7. **Restart** the application to complete the installation.
+8. Navigate to:
+   ```
+   http://localhost:8010/Admin
+   ```
+9. Go to:
+   ```
+   NopStation > Core settings > License
+   ```
+10. On the **License string** field put the provided license → click **Save**
+
+After **License string** is successfully applied the new product attribute functionality will be enabled. Now you can go to the Product Attribute Page and can search with Attribute Name
 
 
-### Contribute ###
+## 🔐 API: Admin Authentication & Order List
 
-As a free and open-source project, we are very grateful to everyone who helps us to develop nopCommerce. Please find more details about the options and bonuses for contributors at [contribute page](https://www.nopcommerce.com/contribute?utm_source=github&utm_medium=referral&utm_campaign=contribute&utm_content=text).
+This project includes admin-authenticated APIs. To use the api properly you need to login first. After login Postman automatically set the token if login is successful. Then you can access the other apis.
+
+
+This project includes admin-authenticated APIs. To use the api properly you need to login first. After login Postman automatically set the token if login is successful. Then you can access the other apis.
+
+```http
+  POST /admincustomer/login
+```
+
+| Parameter       | Type     | Description                              |
+| :-------------- | :------- | :--------------------------------------- |
+| `Email`         | `string` | **Required**. Admin email address        |
+| `Password`      | `string` | **Required**. Admin password             |
+| `RememberMe`    | `bool`   | Optional. Persist session across requests |
+
+#### Login
+
+Authenticates the admin and returns a JWT token in the response under `Data.Token`.
+
+---
+
+```http
+  GET /admincustomer/logout
+```
+
+| Header         | Type     | Description                             |
+| :------------- | :------- | :-------------------------------------- |
+| `Admin-Token`  | `string` | **Required**. Token to invalidate       |
+
+#### Logout
+
+Terminates the admin session and invalidates the token.
+
+---
+
+```http
+  GET /order/List
+```
+
+| Header         | Type     | Description                             |
+| :------------- | :------- | :-------------------------------------- |
+| `Admin-Token`  | `string` | **Required**. Token from login response |
+| `Admin-NST`    | `string` | Optional. Session tracking key          |
+| `User-Agent`   | `string` | Optional. Client identifier             |
+
+#### Get Order List
+
+Returns a list of all orders available to the authenticated admin user.
+
+---
+
+```http
+  POST /order/List
+```
+
+| Header         | Type     | Description                             |
+| :------------- | :------- | :-------------------------------------- |
+| `Admin-Token`  | `string` | **Required**. Token from login response |
+| `Admin-NST`    | `string` | Optional. Session tracking key          |
+| `User-Agent`   | `string` | Optional. Client identifier             |
+
+| Body Field                  | Type       | Description                            |
+| :-------------------------- | :--------- | :------------------------------------- |
+| `StartDate`                | `string`   | Optional. Filter start date            |
+| `EndDate`                  | `string`   | Optional. Filter end date              |
+| `ShippingStatusIds`        | `int[]`    | Optional. Filter by shipping statuses  |
+| `BillingEmail`             | `string`   | Optional. Customer's billing email     |
+| `BillingPhoneEnabled`      | `bool`     | Default: true                          |
+| `Page`, `PageSize`, etc.   | `int`      | Pagination controls                    |
+
+#### Get Order List (Filtered)
+
+Returns filtered list of orders using advanced search options. Response supports paging.
+
+---
+
+```http
+  POST /order/CustomerOrderList
+```
+
+| Header         | Type     | Description                             |
+| :------------- | :------- | :-------------------------------------- |
+| `Admin-Token`  | `string` | **Required**. Token from login response |
+| `Admin-NST`    | `string` | Optional. Session tracking key          |
+| `User-Agent`   | `string` | Optional. Client identifier             |
+
+| Body Field       | Type     | Description                             |
+| :--------------- | :------- | :-------------------------------------- |
+| `CustomerEmail`  | `string` | Customer's email address  |
+| `Page`           | `int`    | Page number                             |
+| `PageSize`       | `int`    | Number of items per page                |
+
+#### Get Orders by Customer Email
+
+Returns a list of orders of the customer with the provided email. Response supports paging. If email is null or empty then it will consider orders for all customer. This can be modify based on the requirment.
+
+
+## 🐳 Docker: Build and Run Locally
+
+### 🔧 Prerequisites
+
+- [Docker](https://www.docker.com/products/docker-desktop)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+### ▶️ Start Application
+
+```bash
+docker-compose up --build
+```
+
+Then open:
+```
+http://localhost:8010
+```
+
+> On the setup page, use:
+- **Database Server**: `nopcommerce_database`
+- **DB Username**: `sa`
+- **DB Password**: `nopCommerce_db_password`
+
+### 📦 Environment Variables
+
+In `docker-compose.yml`:
+
+```yaml
+SA_PASSWORD: "nopCommerce_db_password"
+ACCEPT_EULA: "Y"
+MSSQL_PID: "Express"
+```
+
+---
+
+## 📄 Docker Compose Overview
+
+```yaml
+services:
+  nopcommerce_web:
+    build: .
+    ports:
+      - "8010:80"
+    depends_on:
+      - nopcommerce_database
+    volumes:
+      - ./App_Data:/app/App_Data
+      - ./logs:/app/logs
+  nopcommerce_database:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    environment:
+      SA_PASSWORD: "nopCommerce_db_password"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+volumes:
+  nopcommerce_data:
+```
+
+---
+
+## ☁️ Cloud Deployment Instructions
+
+### 🚀 Deploy to AWS ECS (Fargate)
+
+1. **Build & push the image:**
+   ```bash
+   docker build -t <your-ecr-repo>/nopcommerce-app .
+   docker push <your-ecr-repo>/nopcommerce-app
+   ```
+
+2. **Create RDS (SQL Server Express)**:
+   - Use `sa`/`nopCommerce_db_password`
+
+3. **Set up ECS Fargate Service**:
+   - Image: from ECR
+   - Environment: pass DB connection string
+
+4. **Open port 80** for public access
+
+---
+
+### ☁️ Deploy to Azure (Web App for Containers)
+
+1. **Push to Azure Container Registry (ACR)**:
+   ```bash
+   docker build -t youracr.azurecr.io/nopcommerce-app .
+   docker push youracr.azurecr.io/nopcommerce-app
+   ```
+
+2. **Create Azure SQL Database**
+
+3. **Create a Web App**:
+   - Type: Docker
+   - Source: ACR
+   - Set App Settings for DB connection string
+
+---
+
+## 📬 Postman Collection
+
+You can use the included Postman collection (`nopcommerce-api.postman_collection.json`) to:
+- Authenticate and get JWT token
+- Call the `orders/by-email` endpoint
+
+---
+
+## ✅ Summary
+
+| Feature                        | Status |
+|-------------------------------|--------|
+| Custom Plugin        | ✅ Yes |
+| API Endpoint with JWT Auth    | ✅ Yes |
+| Dockerfile                    | ✅ Yes |
+| docker-compose.yml            | ✅ Yes |
+| Cloud Deployment Instructions | ✅ Yes |
+| Postman Collection            | ✅ Yes |
+
+---
+
+## 👨‍💻 Author
+
+**Fuad Hasan**  
+Senior nopCommerce Developer  
+[Github](https://github.com/fuadwasi) | [LinkedIn](https://www.linkedin.com/in/fuadwasi/) 
+
